@@ -33,10 +33,10 @@ namespace TimeTracker
 		/// Querys the SQLite Database.
 		/// </summary>
 		/// <param name="fields"></param>
-		/// <param name="tables"></param>
+		/// <param name="table"></param>
 		/// <param name="conditions"></param>
 		/// <returns></returns>
-		public static DataTable doQuery(string[] fields, string[] tables, params string[] conditions)
+		public static DataTable doQuery(string[] fields, string table, string[] conditions = null, string[] order = null)
 		{
 			//Build Select string
 			string sql = "SELECT ";
@@ -45,33 +45,37 @@ namespace TimeTracker
 				sql += fields[i];
 				sql += i != fields.Length - 1 ? ", " : " ";
 			}
+
 			sql += "FROM ";
-			if (tables.Length > 1)
+			sql += table;
+
+			if (conditions != null)
 			{
-				for (int j = 0; j < tables.Length; j++)
+				if (conditions.Length > 0)
 				{
-					sql += tables[j];
-					sql += j != tables.Length - 1 ? ", " : " ";
-				}
+					sql += " WHERE ";
+					for (int k = 0; k < conditions.Length; k++)
+					{
+						sql += conditions[k];
+						sql += k != conditions.Length - 1 ? ", " : " ";
+					}
+				} 
 			}
-			else
+			if (order != null)
 			{
-				sql += tables[0];
-			}
-			if (conditions.Length > 1)
-			{
-				sql += "WHERE ";
-				for (int k = 0; k < conditions.Length; k++)
+				if (order.Length > 0)
 				{
-					sql += conditions[k];
-					sql += k != conditions.Length - 1 ? ", " : " ";
-				}
-			} else if (conditions.Length == 1)
-			{
-				sql += "WHERE " + conditions[0];
+					sql += " ORDER BY ";
+					for (int m = 0; m < order.Length; m++)
+					{
+						sql += order[m];
+						sql += m != order.Length - 1 ? ", " : " ";
+					}
+				} 
 			}
 			Debug.WriteLine(sql);
 
+			//Run Query and return results
 			try
 			{
 				SQLiteConnection m_dbConnection;
@@ -89,6 +93,59 @@ namespace TimeTracker
 				return new DataTable();
 			}
 		}
+
+		//public static DataTable doQuery(string[] fields, string[] tables, string[] order = null, string[] conditions = null)
+		//{
+		//	//Build Select string
+		//	string sql = "SELECT ";
+		//	for (int i = 0; i < fields.Length; i++)
+		//	{
+		//		sql += fields[i];
+		//		sql += i != fields.Length - 1 ? ", " : " ";
+		//	}
+		//	sql += "FROM ";
+		//	if (tables.Length > 1)
+		//	{
+		//		for (int j = 0; j < tables.Length; j++)
+		//		{
+		//			sql += tables[j];
+		//			sql += j != tables.Length - 1 ? ", " : " ";
+		//		}
+		//	}
+		//	else
+		//	{
+		//		sql += tables[0];
+		//	}
+		//	if (conditions.Length > 0)
+		//	{
+		//		sql += " WHERE ";
+		//		for (int k = 0; k < conditions.Length; k++)
+		//		{
+		//			sql += conditions[k];
+		//			sql += k != conditions.Length - 1 ? ", " : " ";
+		//		}
+		//	}
+		//	
+		//	Debug.WriteLine(sql);
+
+		//	//Run Query and return results.
+		//	try
+		//	{
+		//		SQLiteConnection m_dbConnection;
+		//		m_dbConnection = new SQLiteConnection(CONNECTION_STRING);
+		//		m_dbConnection.Open();
+		//		SQLiteDataAdapter a = new SQLiteDataAdapter(sql, m_dbConnection);
+		//		DataTable d = new DataTable();
+		//		a.Fill(d);
+		//		m_dbConnection.Close();
+		//		return d;
+		//	}
+		//	catch (Exception e)
+		//	{
+		//		Debug.WriteLine(e.StackTrace);
+		//		return new DataTable();
+		//	}
+		//}
 
 		public static int doQueryTest()
 		{

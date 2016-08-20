@@ -17,7 +17,7 @@ namespace TimeTracker
 		{
 			InitializeComponent();
 			string[] fields = { "FName", "LName" };
-			string[] table = { "ClientContact" };
+			string table = "ClientContact";
 			DataTable dt = DbConn.doQuery(fields, table);
 			dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader);
 			dataGridView1.DataSource = dt;

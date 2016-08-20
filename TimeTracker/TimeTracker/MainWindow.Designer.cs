@@ -122,7 +122,7 @@
 			this.cmbxClientName.Name = "cmbxClientName";
 			this.cmbxClientName.Size = new System.Drawing.Size(226, 24);
 			this.cmbxClientName.TabIndex = 1;
-			this.cmbxClientName.SelectedIndexChanged += new System.EventHandler(this.cmbxClientName_SelectedIndexChanged);
+			this.cmbxClientName.SelectionChangeCommitted += new System.EventHandler(this.cmbxClientName_SelectionChangeCommitted);
 			// 
 			// label1
 			// 

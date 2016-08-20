@@ -25,8 +25,6 @@ namespace TimeTracker
 			//Get settings from config.xml
 
 
-			//Load Clients into drop down list
-			
 		}
 	}
 }
