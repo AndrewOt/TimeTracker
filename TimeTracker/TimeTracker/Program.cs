@@ -16,7 +16,19 @@ namespace TimeTracker
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Form1());
+			Application.Run(new TimeTracker());
+			Initialize();
+		}
+
+		private static void Initialize()
+		{
+			//Get settings from config.xml
+
+
+			//Load Clients into drop down list
+			string[] fields = { "FName", "LName" };
+			string[] table = { "ClientContact" };
+			DbConn.doQuery(fields, table);
 		}
 	}
 }
