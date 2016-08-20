@@ -5,11 +5,15 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace TimeTracker
 {
 	class DbConn
 	{
+		/// <summary>
+		/// The connection string to the SQLite Database. Is changeable via the settings window. Is loaded at launch from config.xml.
+		/// </summary>
 		private static string CONNECTION_STRING = "Data Source= C:\\Users\\andre\\Programming\\C#\\TimeTracker\\TimeTracker\\TimeTracker\\TimeTrackerDB.db;Version=3;";
 
 		public string connectStr {
@@ -19,45 +23,70 @@ namespace TimeTracker
 			}
 			set
 			{
+				//TODO: add test to see if db actually exists
 				string baseStr = CONNECTION_STRING.Split(' ')[0];
 				CONNECTION_STRING = baseStr + value;
 			}
 		}
-		
 
-		public static SQLiteDataReader doQuery(string[] fields, string[] tables, params string[] conditions)
+		/// <summary>
+		/// Querys the SQLite Database.
+		/// </summary>
+		/// <param name="fields"></param>
+		/// <param name="tables"></param>
+		/// <param name="conditions"></param>
+		/// <returns></returns>
+		public static DataTable doQuery(string[] fields, string[] tables, params string[] conditions)
 		{
 			//Build Select string
 			string sql = "SELECT ";
 			for (int i = 0; i < fields.Length; i++)
 			{
 				sql += fields[i];
-				sql += (i - 1) == fields.Length ? ", " : " ";
+				sql += i != fields.Length - 1 ? ", " : " ";
 			}
 			sql += "FROM ";
 			if (tables.Length > 1)
 			{
-				
+				for (int j = 0; j < tables.Length; j++)
+				{
+					sql += tables[j];
+					sql += j != tables.Length - 1 ? ", " : " ";
+				}
 			}
 			else
 			{
 				sql += tables[0];
 			}
+			if (conditions.Length > 1)
+			{
+				sql += "WHERE ";
+				for (int k = 0; k < conditions.Length; k++)
+				{
+					sql += conditions[k];
+					sql += k != conditions.Length - 1 ? ", " : " ";
+				}
+			} else if (conditions.Length == 1)
+			{
+				sql += "WHERE " + conditions[0];
+			}
+			Debug.WriteLine(sql);
 
 			try
 			{
 				SQLiteConnection m_dbConnection;
 				m_dbConnection = new SQLiteConnection(CONNECTION_STRING);
 				m_dbConnection.Open();
-				SQLiteCommand c = new SQLiteCommand("SELECT * FROM Client", m_dbConnection);
-				SQLiteDataReader d = c.ExecuteReader();
+				SQLiteDataAdapter a = new SQLiteDataAdapter(sql, m_dbConnection);
+				DataTable d = new DataTable();
+				a.Fill(d);
 				m_dbConnection.Close();
 				return d;
 			}
 			catch (Exception e)
 			{
 				Debug.WriteLine(e.StackTrace);
-				return null;
+				return new DataTable();
 			}
 		}
 

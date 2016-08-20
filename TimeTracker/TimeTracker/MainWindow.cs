@@ -16,6 +16,7 @@ namespace TimeTracker
 		public TimeTracker()
 		{
 			InitializeComponent();
+			PopulateClients();
 		}
 
 		private void timer1_Tick(object sender, EventArgs e)
@@ -50,7 +51,8 @@ namespace TimeTracker
 
 		private void btnEditCurrentPunch_Click(object sender, EventArgs e)
 		{
-
+			TestingForm t = new TestingForm();
+			t.Show();
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)
@@ -61,9 +63,17 @@ namespace TimeTracker
 			string TimeOut = txtTimeOut.Text;
 			string Notes = txtNotes.Text;
 			string Date = txtDate.Text;
-			DialogResult r;
-			r = MessageBox.Show(DbConn.doQueryTest().ToString(), "Success!", MessageBoxButtons.YesNo);
+			//DialogResult r;
+			//r = MessageBox.Show(DbConn.doQueryTest().ToString(), "Success!", MessageBoxButtons.YesNo);
+			//TestingForm tf = new TestingForm();
+			//tf.
+			//tf.Load += fill;
 			//DbConn.doUpdateQuery();
+		}
+
+		private void fill(object sender, EventArgs e)
+		{
+
 		}
 
 		private void cmbxClientName_SelectedIndexChanged(object sender, EventArgs e)
@@ -91,6 +101,22 @@ namespace TimeTracker
 		private void btnTimeOut_Click(object sender, EventArgs e)
 		{
 			txtTimeOut.Text = DateTime.Now.ToString().Split(' ')[1];
+		}
+
+		/*
+		 * Credit: http://stackoverflow.com/questions/256832/c-sharp-fill-a-combo-box-with-a-datatable
+		 * http://stackoverflow.com/questions/17538323/how-to-display-two-different-columns-in-one-combobox
+		 */
+		private void PopulateClients()
+		{
+			//Get data
+			string[] fields = { "ID", "FullName" };
+			string[] table = { "ClientContact" };
+			DataTable dt = DbConn.doQuery(fields, table);
+			cmbxClientName.DataSource = dt;
+			cmbxClientName.DisplayMember = "FullName";
+			cmbxClientName.ValueMember = "ID";
+			cmbxClientName.Text = "";
 		}
 	}
 }

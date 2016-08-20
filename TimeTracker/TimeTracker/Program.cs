@@ -26,9 +26,7 @@ namespace TimeTracker
 
 
 			//Load Clients into drop down list
-			string[] fields = { "FName", "LName" };
-			string[] table = { "ClientContact" };
-			DbConn.doQuery(fields, table);
+			
 		}
 	}
 }
