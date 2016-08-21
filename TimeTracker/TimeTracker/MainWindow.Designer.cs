@@ -55,6 +55,7 @@
 			this.label8 = new System.Windows.Forms.Label();
 			this.lblCurrentPunch = new System.Windows.Forms.Label();
 			this.btnEditCurrentPunch = new System.Windows.Forms.Button();
+			this.btnClear = new System.Windows.Forms.Button();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -117,6 +118,7 @@
 			// 
 			// cmbxClientName
 			// 
+			this.cmbxClientName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cmbxClientName.FormattingEnabled = true;
 			this.cmbxClientName.Location = new System.Drawing.Point(69, 133);
 			this.cmbxClientName.Name = "cmbxClientName";
@@ -154,6 +156,7 @@
 			// 
 			// cmbxClientProject
 			// 
+			this.cmbxClientProject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cmbxClientProject.Enabled = false;
 			this.cmbxClientProject.FormattingEnabled = true;
 			this.cmbxClientProject.Location = new System.Drawing.Point(358, 133);
@@ -176,6 +179,8 @@
 			this.txtDate.Name = "txtDate";
 			this.txtDate.Size = new System.Drawing.Size(158, 22);
 			this.txtDate.TabIndex = 7;
+			this.txtDate.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDate_KeyDown);
+			this.txtDate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDate_KeyPress);
 			// 
 			// btnToday
 			// 
@@ -295,6 +300,16 @@
 			this.btnEditCurrentPunch.UseVisualStyleBackColor = true;
 			this.btnEditCurrentPunch.Click += new System.EventHandler(this.btnEditCurrentPunch_Click);
 			// 
+			// btnClear
+			// 
+			this.btnClear.Location = new System.Drawing.Point(631, 333);
+			this.btnClear.Name = "btnClear";
+			this.btnClear.Size = new System.Drawing.Size(75, 31);
+			this.btnClear.TabIndex = 21;
+			this.btnClear.Text = "Clear";
+			this.btnClear.UseVisualStyleBackColor = true;
+			this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+			// 
 			// TimeTracker
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -302,6 +317,7 @@
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ClientSize = new System.Drawing.Size(796, 828);
+			this.Controls.Add(this.btnClear);
 			this.Controls.Add(this.btnEditCurrentPunch);
 			this.Controls.Add(this.lblCurrentPunch);
 			this.Controls.Add(this.label8);
@@ -363,6 +379,7 @@
 		private System.Windows.Forms.ToolStripMenuItem addNewClientProjectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem viewAllProjectsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+		private System.Windows.Forms.Button btnClear;
 	}
 }
 

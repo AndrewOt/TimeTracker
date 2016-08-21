@@ -6,6 +6,7 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,6 +14,9 @@ namespace TimeTracker
 {
 	public partial class TimeTracker : Form
 	{
+
+		bool InputIsNumber;
+
 		public TimeTracker()
 		{
 			InitializeComponent();
@@ -83,7 +87,11 @@ namespace TimeTracker
 		private void cmbxClientName_SelectionChangeCommitted(object sender, EventArgs e)
 		{
 			DataRowView SelectedClientRow = (DataRowView)cmbxClientName.SelectedItem;
-			PopulateClientProjects(int.Parse(SelectedClientRow.Row[0].ToString()));
+			int ID = int.Parse(SelectedClientRow.Row[0].ToString());
+			if (ID != 0)
+				PopulateClientProjects(ID);
+			else
+				cmbxClientProject.Enabled = false;
 		}
 
 		private void btnNowIn_Click(object sender, EventArgs e)
@@ -127,12 +135,6 @@ namespace TimeTracker
 			string table = "ClientProject";
 			string[] ProjectConditions = { "ClientIDFK=" + ClientID.ToString() };
 			DataTable ProjectList = DbConn.doQuery(fields, table, ProjectConditions);
-
-			//Add an empty row so that the first row will be empty and the text will show empty.
-			DataRow EmptyRow = ProjectList.NewRow();
-			EmptyRow["ID"] = 0;
-			EmptyRow["Title"] = "";
-			ProjectList.Rows.InsertAt(EmptyRow, 0);
 
 			//Fill dropdown
 			cmbxClientProject.DataSource = ProjectList;
@@ -182,6 +184,38 @@ namespace TimeTracker
 			cmbxClientName.DataSource = ClientList;
 			cmbxClientName.DisplayMember = "FullName";
 			cmbxClientName.ValueMember = "ID";
+		}
+
+		private void btnClear_Click(object sender, EventArgs e)
+		{
+			txtTimeIn.Text = "";
+			txtTimeOut.Text = "";
+			txtDate.Text = "";
+		}
+
+		private void txtDate_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (InputIsNumber)
+			{
+				e.Handled = true;
+			}
+		}
+
+		private void txtDate_KeyDown(object sender, KeyEventArgs e)
+		{
+			InputIsNumber = false;
+			//Regex r = new Regex("{0-4}");
+			if (e.KeyCode <= Keys.D0 || e.KeyCode >= Keys.D9)
+			{
+				if (e.KeyCode <= Keys.NumPad0 || e.KeyCode >= Keys.NumPad9)
+				{
+					if (e.KeyCode != Keys.Back)
+					{
+						if (e.KeyCode == Keys.Divide)
+						InputIsNumber = true;
+					}
+				}
+			}
 		}
 	}
 }
