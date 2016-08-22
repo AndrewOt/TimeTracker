@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.SQLite;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace TimeTracker
@@ -51,18 +44,15 @@ namespace TimeTracker
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
-			string Client = cmbxClientName.Text;
-			string Project = cmbxClientProject.Text;
 			string TimeIn = txtTimeIn.Text;
 			string TimeOut = txtTimeOut.Text;
 			string Notes = txtNotes.Text;
 			string Date = txtDate.Text;
-			//DialogResult r;
-			//r = MessageBox.Show(DbConn.doQueryTest().ToString(), "Success!", MessageBoxButtons.YesNo);
-			//TestingForm tf = new TestingForm();
-			//tf.
-			//tf.Load += fill;
-			//DbConn.doUpdateQuery();
+			string[] values = { cmbxClientProject.SelectedValue.ToString(), txtTimeIn.Text, txtTimeOut.Text, Notes, Date };
+			string[] columns = { "ClientProjectIDFK", "TimeIn", "TimeOUt", "Notes", "DatePunched" };
+			string table = "TimePunch";
+			DbConn.doInsert(values, table, columns);
+			MessageBox.Show("The punch was successfully added!", "Punch successful");
 		}
 
 		private void fill(object sender, EventArgs e)
@@ -110,21 +100,24 @@ namespace TimeTracker
 		private void PopulateForm()
 		{
 			PopulateClients();
-			//cmbxClientName.Text = "";
 			string[] field = { "*" };
 			string table = "TimePunch";
-			string[] conditions = { "TimeOut IS NULL" };
+			string[] conditions = { "TimeOut IS NULL OR TimeOut=''" };
 			DataTable punch = DbConn.doQuery(field, table, conditions);
 			if (punch.Rows.Count != 0)
 			{
-				string NameID = GetClientNameFromPunch(punch);
-				cmbxClientName.SelectedIndex = int.Parse(NameID);
+				int ClientId;
+				cmbxClientName.SelectedValue = int.Parse(GetClientNameFromPunch(punch));
 				cmbxClientProject.Enabled = true;
-				PopulateClientProjects(0);
-				cmbxClientProject.SelectedIndex = 0;
-				txtTimeIn.Text = punch.Columns["TimeIn"].ToString();
-				txtDate.Text = punch.Columns["DatePunched"].ToString();
-				txtNotes.Text = punch.Columns["Notes"].ToString();
+				bool parse = int.TryParse(cmbxClientName.SelectedValue.ToString(), out ClientId);
+				PopulateClientProjects(ClientId);
+				cmbxClientProject.SelectedValue = int.Parse(punch.Rows[0][1].ToString());
+				txtTimeIn.Text = punch.Rows[0][2].ToString();
+				txtTimeOut.Text = punch.Rows[0][3].ToString();
+				txtDate.Text = punch.Rows[0][5].ToString();
+				txtNotes.Text = punch.Rows[0][4].ToString();
+				lblCurrentPunch.Text = "---Punched in: " + punch.Rows[0][2].ToString() + ", Punched out: " 
+					+ punch.Rows[0][3].ToString() + ", Client: " + cmbxClientName.Text + "---";
 			}
 		}
 
@@ -143,23 +136,29 @@ namespace TimeTracker
 		}
 
 		//Think about restructing this to be more effecient.
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="punch"></param>
+		/// <returns>The ID of the Client.</returns>
 		private string GetClientNameFromPunch(DataTable punch)
 		{
-			string[] ProjectConditions = { "ClientProjectIDFK=" + punch.Columns["ClientProjectIDFK"].ToString() };
+			string[] ProjectConditions = { "ID=" + punch.Rows[0][1].ToString() };
 			string ClientTable = "ClientProject";
 			string[] field = { "*" };
 			DataTable project = DbConn.doQuery(field, ClientTable, ProjectConditions);
-			if (project.Rows.Count > 0)
-			{
-				string[] ContactConditions = { "CliendIDFK=" + project.Columns["ClientIDFK"].ToString() };
-				string ContactTable = "ClientContact";
-				DataTable contact = DbConn.doQuery(field, ContactTable, ContactConditions);
-				return contact.Columns["ID"].ToString();
-			}
-			else
-			{
-				return "0";
-			}
+			return project.Rows[0][1].ToString();
+			//if (project.Rows.Count > 0)
+			//{
+			//	string[] ContactConditions = { "CliendIDFK=" + project.Rows[1] };
+			//	string ContactTable = "ClientContact";
+			//	DataTable contact = DbConn.doQuery(field, ContactTable, ContactConditions);
+			//	return contact.Columns["ClientIDFK"].ToString();
+			//}
+			//else
+			//{
+			//	return "0";
+			//}
 		}
 
 		/*
@@ -204,7 +203,6 @@ namespace TimeTracker
 		private void txtDate_KeyDown(object sender, KeyEventArgs e)
 		{
 			InputIsNumber = false;
-			//Regex r = new Regex("{0-4}");
 			if (e.KeyCode <= Keys.D0 || e.KeyCode >= Keys.D9)
 			{
 				if (e.KeyCode <= Keys.NumPad0 || e.KeyCode >= Keys.NumPad9)

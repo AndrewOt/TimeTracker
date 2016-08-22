@@ -38,6 +38,7 @@ namespace TimeTracker
 		/// <returns></returns>
 		public static DataTable doQuery(string[] fields, string table, string[] conditions = null, string[] order = null)
 		{
+			//TODO: Add parameterization to this function by using a SQLiteCommand object.
 			//Build Select string
 			string sql = "SELECT ";
 			for (int i = 0; i < fields.Length; i++)
@@ -94,94 +95,44 @@ namespace TimeTracker
 			}
 		}
 
-		//public static DataTable doQuery(string[] fields, string[] tables, string[] order = null, string[] conditions = null)
-		//{
-		//	//Build Select string
-		//	string sql = "SELECT ";
-		//	for (int i = 0; i < fields.Length; i++)
-		//	{
-		//		sql += fields[i];
-		//		sql += i != fields.Length - 1 ? ", " : " ";
-		//	}
-		//	sql += "FROM ";
-		//	if (tables.Length > 1)
-		//	{
-		//		for (int j = 0; j < tables.Length; j++)
-		//		{
-		//			sql += tables[j];
-		//			sql += j != tables.Length - 1 ? ", " : " ";
-		//		}
-		//	}
-		//	else
-		//	{
-		//		sql += tables[0];
-		//	}
-		//	if (conditions.Length > 0)
-		//	{
-		//		sql += " WHERE ";
-		//		for (int k = 0; k < conditions.Length; k++)
-		//		{
-		//			sql += conditions[k];
-		//			sql += k != conditions.Length - 1 ? ", " : " ";
-		//		}
-		//	}
-		//	
-		//	Debug.WriteLine(sql);
-
-		//	//Run Query and return results.
-		//	try
-		//	{
-		//		SQLiteConnection m_dbConnection;
-		//		m_dbConnection = new SQLiteConnection(CONNECTION_STRING);
-		//		m_dbConnection.Open();
-		//		SQLiteDataAdapter a = new SQLiteDataAdapter(sql, m_dbConnection);
-		//		DataTable d = new DataTable();
-		//		a.Fill(d);
-		//		m_dbConnection.Close();
-		//		return d;
-		//	}
-		//	catch (Exception e)
-		//	{
-		//		Debug.WriteLine(e.StackTrace);
-		//		return new DataTable();
-		//	}
-		//}
-
-		public static int doQueryTest()
+		public static void doInsert(string[] values, string table, string[] columns)
 		{
+			if (values.Length != columns.Length)
+			{
+				throw new Exception("Values and columns not equal length!");
+			}
+			SQLiteConnection m_dbConnection = new SQLiteConnection(CONNECTION_STRING);
+			SQLiteCommand command = new SQLiteCommand();
+			command.Connection = m_dbConnection;
+			string sql = "INSERT INTO " + table;
+			if (columns != null)
+			{
+				if (columns.Length > 0)
+				{
+					sql += " (";
+					for(int i = 0; i < columns.Length; i++)
+					{
+						sql += columns[i];
+						sql += i != columns.Length - 1 ? ", " : "";
+					}
+					sql += ") ";
+				}
+			}
 
-			try
+			sql += " VALUES(";
+			for (int j = 0; j < values.Length; j++)
 			{
-				SQLiteConnection m_dbConnection;
-				m_dbConnection = new SQLiteConnection(CONNECTION_STRING);
-				m_dbConnection.Open();
-				SQLiteCommand c = new SQLiteCommand("SELECT * FROM Client", m_dbConnection);
-				SQLiteDataReader d = c.ExecuteReader();
-				m_dbConnection.Close();
-				return 0;
+				//Build the rest of sql string. Uses parameterized values
+				sql += j != values.Length - 1 ? "@" + columns[j] + ", " : "@" + columns[j];
+				//Add parameterization to command object
+				command.Parameters.AddWithValue("@" + columns[j], values[j]);
 			}
-			catch (Exception e)
-			{
-				Debug.WriteLine(e.StackTrace);
-				return 1;
-			}
-		}
-
-		public static void doUpdateQuery(string Client, string Project, string Date, string TimeIn, string TimeOut, string Notes)
-		{
-			try
-			{
-				SQLiteConnection m_dbConnection;
-				m_dbConnection = new SQLiteConnection("Data Source=MyDatabase.sqlite;Version=3;");
-				m_dbConnection.Open();
-				SQLiteCommand c = new SQLiteCommand();
-				c.CommandText = "";
-				c.ExecuteNonQuery();
-				m_dbConnection.Close();
-			} catch (Exception e)
-			{
-				Debug.WriteLine(e.StackTrace);
-			}
+			sql += ");";
+			command.CommandText = sql;
+			m_dbConnection.Open();
+			command.ExecuteNonQuery();
+			m_dbConnection.Close();
+			Debug.WriteLine(sql);
 		}
 
 	}
