@@ -41,8 +41,8 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.cmbxClientProject = new System.Windows.Forms.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.txtDate = new System.Windows.Forms.TextBox();
-			this.btnToday = new System.Windows.Forms.Button();
+			this.txtDateIn = new System.Windows.Forms.TextBox();
+			this.btnDateInToday = new System.Windows.Forms.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.txtTimeIn = new System.Windows.Forms.TextBox();
@@ -56,6 +56,9 @@
 			this.lblCurrentPunch = new System.Windows.Forms.Label();
 			this.btnEditCurrentPunch = new System.Windows.Forms.Button();
 			this.btnClear = new System.Windows.Forms.Button();
+			this.btnDateOutToday = new System.Windows.Forms.Button();
+			this.txtDateOut = new System.Windows.Forms.TextBox();
+			this.label9 = new System.Windows.Forms.Label();
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -148,7 +151,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(355, 102);
+			this.label3.Location = new System.Drawing.Point(360, 102);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(134, 17);
 			this.label3.TabIndex = 4;
@@ -159,7 +162,7 @@
 			this.cmbxClientProject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cmbxClientProject.Enabled = false;
 			this.cmbxClientProject.FormattingEnabled = true;
-			this.cmbxClientProject.Location = new System.Drawing.Point(358, 133);
+			this.cmbxClientProject.Location = new System.Drawing.Point(363, 133);
 			this.cmbxClientProject.Name = "cmbxClientProject";
 			this.cmbxClientProject.Size = new System.Drawing.Size(233, 24);
 			this.cmbxClientProject.TabIndex = 5;
@@ -169,28 +172,28 @@
 			this.label4.AutoSize = true;
 			this.label4.Location = new System.Drawing.Point(66, 191);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(38, 17);
+			this.label4.Size = new System.Drawing.Size(53, 17);
 			this.label4.TabIndex = 6;
-			this.label4.Text = "Date";
+			this.label4.Text = "Date In";
 			// 
-			// txtDate
+			// txtDateIn
 			// 
-			this.txtDate.Location = new System.Drawing.Point(69, 221);
-			this.txtDate.Name = "txtDate";
-			this.txtDate.Size = new System.Drawing.Size(158, 22);
-			this.txtDate.TabIndex = 7;
-			this.txtDate.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDate_KeyDown);
-			this.txtDate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDate_KeyPress);
+			this.txtDateIn.Location = new System.Drawing.Point(69, 221);
+			this.txtDateIn.Name = "txtDateIn";
+			this.txtDateIn.Size = new System.Drawing.Size(158, 22);
+			this.txtDateIn.TabIndex = 7;
+			this.txtDateIn.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtDate_KeyDown);
+			this.txtDateIn.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDate_KeyPress);
 			// 
-			// btnToday
+			// btnDateInToday
 			// 
-			this.btnToday.Location = new System.Drawing.Point(253, 221);
-			this.btnToday.Name = "btnToday";
-			this.btnToday.Size = new System.Drawing.Size(75, 31);
-			this.btnToday.TabIndex = 8;
-			this.btnToday.Text = "Today";
-			this.btnToday.UseVisualStyleBackColor = true;
-			this.btnToday.Click += new System.EventHandler(this.btnToday_Click);
+			this.btnDateInToday.Location = new System.Drawing.Point(253, 221);
+			this.btnDateInToday.Name = "btnDateInToday";
+			this.btnDateInToday.Size = new System.Drawing.Size(75, 31);
+			this.btnDateInToday.TabIndex = 8;
+			this.btnDateInToday.Text = "Today";
+			this.btnDateInToday.UseVisualStyleBackColor = true;
+			this.btnDateInToday.Click += new System.EventHandler(this.btnToday_Click);
 			// 
 			// label5
 			// 
@@ -310,6 +313,32 @@
 			this.btnClear.UseVisualStyleBackColor = true;
 			this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
 			// 
+			// btnDateOutToday
+			// 
+			this.btnDateOutToday.Location = new System.Drawing.Point(547, 221);
+			this.btnDateOutToday.Name = "btnDateOutToday";
+			this.btnDateOutToday.Size = new System.Drawing.Size(75, 31);
+			this.btnDateOutToday.TabIndex = 24;
+			this.btnDateOutToday.Text = "Today";
+			this.btnDateOutToday.UseVisualStyleBackColor = true;
+			this.btnDateOutToday.Click += new System.EventHandler(this.btnDateOutToday_Click);
+			// 
+			// txtDateOut
+			// 
+			this.txtDateOut.Location = new System.Drawing.Point(363, 221);
+			this.txtDateOut.Name = "txtDateOut";
+			this.txtDateOut.Size = new System.Drawing.Size(158, 22);
+			this.txtDateOut.TabIndex = 23;
+			// 
+			// label9
+			// 
+			this.label9.AutoSize = true;
+			this.label9.Location = new System.Drawing.Point(360, 191);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(65, 17);
+			this.label9.TabIndex = 22;
+			this.label9.Text = "Date Out";
+			// 
 			// TimeTracker
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -317,6 +346,9 @@
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ClientSize = new System.Drawing.Size(796, 828);
+			this.Controls.Add(this.btnDateOutToday);
+			this.Controls.Add(this.txtDateOut);
+			this.Controls.Add(this.label9);
 			this.Controls.Add(this.btnClear);
 			this.Controls.Add(this.btnEditCurrentPunch);
 			this.Controls.Add(this.lblCurrentPunch);
@@ -330,8 +362,8 @@
 			this.Controls.Add(this.txtTimeIn);
 			this.Controls.Add(this.label6);
 			this.Controls.Add(this.label5);
-			this.Controls.Add(this.btnToday);
-			this.Controls.Add(this.txtDate);
+			this.Controls.Add(this.btnDateInToday);
+			this.Controls.Add(this.txtDateIn);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.cmbxClientProject);
 			this.Controls.Add(this.label3);
@@ -362,8 +394,8 @@
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.ComboBox cmbxClientProject;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.TextBox txtDate;
-		private System.Windows.Forms.Button btnToday;
+		private System.Windows.Forms.TextBox txtDateIn;
+		private System.Windows.Forms.Button btnDateInToday;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox txtTimeIn;
@@ -380,6 +412,9 @@
 		private System.Windows.Forms.ToolStripMenuItem viewAllProjectsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
 		private System.Windows.Forms.Button btnClear;
+		private System.Windows.Forms.Button btnDateOutToday;
+		private System.Windows.Forms.TextBox txtDateOut;
+		private System.Windows.Forms.Label label9;
 	}
 }
 

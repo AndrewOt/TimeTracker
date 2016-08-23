@@ -9,6 +9,7 @@ namespace TimeTracker
 	{
 
 		bool InputIsNumber;
+		private int CurrentPunchID;
 
 		public TimeTracker()
 		{
@@ -47,7 +48,7 @@ namespace TimeTracker
 			string TimeIn = txtTimeIn.Text;
 			string TimeOut = txtTimeOut.Text;
 			string Notes = txtNotes.Text;
-			string Date = txtDate.Text;
+			string Date = txtDateIn.Text;
 			string[] values = { cmbxClientProject.SelectedValue.ToString(), txtTimeIn.Text, txtTimeOut.Text, Notes, Date };
 			string[] columns = { "ClientProjectIDFK", "TimeIn", "TimeOUt", "Notes", "DatePunched" };
 			string table = "TimePunch";
@@ -71,17 +72,7 @@ namespace TimeTracker
 
 		private void btnToday_Click(object sender, EventArgs e)
 		{
-			txtDate.Text = DateTime.Now.ToString().Split(' ')[0];
-		}
-
-		private void cmbxClientName_SelectionChangeCommitted(object sender, EventArgs e)
-		{
-			DataRowView SelectedClientRow = (DataRowView)cmbxClientName.SelectedItem;
-			int ID = int.Parse(SelectedClientRow.Row[0].ToString());
-			if (ID != 0)
-				PopulateClientProjects(ID);
-			else
-				cmbxClientProject.Enabled = false;
+			txtDateIn.Text = DateTime.Now.ToString().Split(' ')[0];
 		}
 
 		private void btnNowIn_Click(object sender, EventArgs e)
@@ -92,6 +83,21 @@ namespace TimeTracker
 		private void btnTimeOut_Click(object sender, EventArgs e)
 		{
 			txtTimeOut.Text = DateTime.Now.ToString().Split(' ')[1];
+		}
+
+		private void btnDateOutToday_Click(object sender, EventArgs e)
+		{
+			txtDateOut.Text = DateTime.Now.ToString().Split(' ')[0];
+		}
+
+		private void cmbxClientName_SelectionChangeCommitted(object sender, EventArgs e)
+		{
+			DataRowView SelectedClientRow = (DataRowView)cmbxClientName.SelectedItem;
+			int ID = int.Parse(SelectedClientRow.Row[0].ToString());
+			if (ID != 0)
+				PopulateClientProjects(ID);
+			else
+				cmbxClientProject.Enabled = false;
 		}
 
 		/// <summary>
@@ -106,6 +112,7 @@ namespace TimeTracker
 			DataTable punch = DbConn.doQuery(field, table, conditions);
 			if (punch.Rows.Count != 0)
 			{
+				CurrentPunchID = int.Parse(punch.Rows[0][0].ToString());
 				int ClientId;
 				cmbxClientName.SelectedValue = int.Parse(GetClientNameFromPunch(punch));
 				cmbxClientProject.Enabled = true;
@@ -114,10 +121,10 @@ namespace TimeTracker
 				cmbxClientProject.SelectedValue = int.Parse(punch.Rows[0][1].ToString());
 				txtTimeIn.Text = punch.Rows[0][2].ToString();
 				txtTimeOut.Text = punch.Rows[0][3].ToString();
-				txtDate.Text = punch.Rows[0][5].ToString();
+				txtDateIn.Text = punch.Rows[0][5].ToString();
 				txtNotes.Text = punch.Rows[0][4].ToString();
-				lblCurrentPunch.Text = "---Punched in: " + punch.Rows[0][2].ToString() + ", Punched out: " 
-					+ punch.Rows[0][3].ToString() + ", Client: " + cmbxClientName.Text + "---";
+				lblCurrentPunch.Text = "--- Punched In: " + punch.Rows[0][2].ToString() + ", Date In: " 
+					+ punch.Rows[0][6].ToString() + ", Client: " + cmbxClientName.Text + " ---";
 			}
 		}
 
@@ -139,7 +146,7 @@ namespace TimeTracker
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="punch"></param>
+		/// <param name="punch" type="DataTable"></param>
 		/// <returns>The ID of the Client.</returns>
 		private string GetClientNameFromPunch(DataTable punch)
 		{
@@ -148,17 +155,6 @@ namespace TimeTracker
 			string[] field = { "*" };
 			DataTable project = DbConn.doQuery(field, ClientTable, ProjectConditions);
 			return project.Rows[0][1].ToString();
-			//if (project.Rows.Count > 0)
-			//{
-			//	string[] ContactConditions = { "CliendIDFK=" + project.Rows[1] };
-			//	string ContactTable = "ClientContact";
-			//	DataTable contact = DbConn.doQuery(field, ContactTable, ContactConditions);
-			//	return contact.Columns["ClientIDFK"].ToString();
-			//}
-			//else
-			//{
-			//	return "0";
-			//}
 		}
 
 		/*
@@ -189,7 +185,11 @@ namespace TimeTracker
 		{
 			txtTimeIn.Text = "";
 			txtTimeOut.Text = "";
-			txtDate.Text = "";
+			txtDateIn.Text = "";
+			txtDateOut.Text = "";
+			txtNotes.Text = "";
+			cmbxClientName.SelectedIndex = 0;
+			cmbxClientProject.Enabled = false;
 		}
 
 		private void txtDate_KeyPress(object sender, KeyPressEventArgs e)
@@ -215,5 +215,6 @@ namespace TimeTracker
 				}
 			}
 		}
+
 	}
 }
