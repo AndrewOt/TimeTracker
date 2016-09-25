@@ -14,7 +14,7 @@ namespace TimeTracker
 		/// <summary>
 		/// The connection string to the SQLite Database. Is changeable via the settings window. Is loaded at launch from config.xml.
 		/// </summary>
-		private static string CONNECTION_STRING = "Data Source= C:\\Users\\andre\\Programming\\C#\\TimeTracker\\TimeTracker\\TimeTracker\\TimeTrackerDB.db;Version=3;";
+		private static string CONNECTION_STRING = "C:\\Users\\andre\\Programming\\C#\\TimeTracker\\TimeTracker\\TimeTracker\\TimeTrackerDB.db;Version=3;";
 
 		public string connectStr {
 			get
@@ -36,7 +36,7 @@ namespace TimeTracker
 		/// <param name="table"></param>
 		/// <param name="conditions"></param>
 		/// <returns></returns>
-		public static DataTable doQuery(string[] fields, string table, string[] conditions = null, string[] order = null)
+		public static DataTable doQuery(string[] fields, string table, string[] conditions = null, string[] order = null, int Limit = 0)
 		{
 			//TODO: Add parameterization to this function by using a SQLiteCommand object.
 			//Build Select string
@@ -51,14 +51,18 @@ namespace TimeTracker
 			sql += table;
 
 			if (conditions != null)
+				if (Limit > 0)
+					sql += " LIMIT " + Limit;
+
+			if (conditions != null)
 			{
 				if (conditions.Length > 0)
 				{
 					sql += " WHERE ";
 					for (int k = 0; k < conditions.Length; k++)
 					{
-						sql += conditions[k];
-						sql += k != conditions.Length - 1 ? ", " : " ";
+						sql += conditions[k] + " ";
+						//sql += k != conditions.Length - 1 ? ", " : " ";
 					}
 				} 
 			}
@@ -74,6 +78,7 @@ namespace TimeTracker
 					}
 				} 
 			}
+			
 			Debug.WriteLine(sql);
 
 			//Run Query and return results
@@ -99,7 +104,7 @@ namespace TimeTracker
 		{
 			if (values.Length != columns.Length)
 			{
-				throw new Exception("Values and columns not equal length!");
+				throw new Exception("Values and columns do not match! They are unequal lengths.");
 			}
 			SQLiteConnection m_dbConnection = new SQLiteConnection(CONNECTION_STRING);
 			SQLiteCommand command = new SQLiteCommand();

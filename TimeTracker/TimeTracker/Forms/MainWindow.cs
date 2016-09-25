@@ -2,6 +2,7 @@
 using System.Data;
 using System.Diagnostics;
 using System.Windows.Forms;
+using TimeTracker.Classes;
 
 namespace TimeTracker
 {
@@ -45,12 +46,18 @@ namespace TimeTracker
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
-			string TimeIn = txtTimeIn.Text;
-			string TimeOut = txtTimeOut.Text;
-			string Notes = txtNotes.Text;
-			string Date = txtDateIn.Text;
-			string[] values = { cmbxClientProject.SelectedValue.ToString(), txtTimeIn.Text, txtTimeOut.Text, Notes, Date };
-			string[] columns = { "ClientProjectIDFK", "TimeIn", "TimeOUt", "Notes", "DatePunched" };
+			Punch NewPunch = new Punch();
+			NewPunch.TimeIn = txtTimeIn.Text;
+			NewPunch.DateIn = btnDateInToday.Text;
+			NewPunch.TimeOut = txtTimeOut.Text;
+			NewPunch.DateOut = txtDateOut.Text;
+			NewPunch.Notes = txtNotes.Text;
+			//string TimeIn = txtTimeIn.Text;
+			//string TimeOut = txtTimeOut.Text;
+			//string Notes = txtNotes.Text;
+			//string Date = txtDateIn.Text;
+			//string[] values = { cmbxClientProject.SelectedValue.ToString(), txtTimeIn.Text, txtTimeOut.Text, Notes, Date };
+			string[] columns = { "ClientProjectIDFK", "TimeIn", "TimeOUt", "Notes", "DatePunchedIn", "DatePunchedOut" };
 			string table = "TimePunch";
 			DbConn.doInsert(values, table, columns);
 			MessageBox.Show("The punch was successfully added!", "Punch successful");
@@ -105,27 +112,29 @@ namespace TimeTracker
 		/// </summary>
 		private void PopulateForm()
 		{
+			Punch punch = new Punch();
+			Punch.IsActivePunch(out punch);
 			PopulateClients();
-			string[] field = { "*" };
-			string table = "TimePunch";
-			string[] conditions = { "TimeOut IS NULL OR TimeOut=''" };
-			DataTable punch = DbConn.doQuery(field, table, conditions);
-			if (punch.Rows.Count != 0)
+			if (punch != null)
 			{
-				CurrentPunchID = int.Parse(punch.Rows[0][0].ToString());
-				int ClientId;
-				cmbxClientName.SelectedValue = int.Parse(GetClientNameFromPunch(punch));
-				cmbxClientProject.Enabled = true;
-				bool parse = int.TryParse(cmbxClientName.SelectedValue.ToString(), out ClientId);
-				PopulateClientProjects(ClientId);
-				cmbxClientProject.SelectedValue = int.Parse(punch.Rows[0][1].ToString());
-				txtTimeIn.Text = punch.Rows[0][2].ToString();
-				txtTimeOut.Text = punch.Rows[0][3].ToString();
-				txtDateIn.Text = punch.Rows[0][5].ToString();
-				txtNotes.Text = punch.Rows[0][4].ToString();
-				lblCurrentPunch.Text = "--- Punched In: " + punch.Rows[0][2].ToString() + ", Date In: " 
-					+ punch.Rows[0][6].ToString() + ", Client: " + cmbxClientName.Text + " ---";
+				cmbxClientName.SelectedValue = ;
 			}
+			//if (punch.Rows.Count != 0)
+			//{
+			//	CurrentPunchID = int.Parse(punch.Rows[0][0].ToString());
+			//	int ClientId;
+			//	cmbxClientName.SelectedValue = int.Parse(GetClientNameFromPunch(punch));
+			//	cmbxClientProject.Enabled = true;
+			//	bool parse = int.TryParse(cmbxClientName.SelectedValue.ToString(), out ClientId);
+			//	PopulateClientProjects(ClientId);
+			//	cmbxClientProject.SelectedValue = int.Parse(punch.Rows[0][1].ToString());
+			//	txtTimeIn.Text = punch.Rows[0][2].ToString();
+			//	txtTimeOut.Text = punch.Rows[0][3].ToString();
+			//	txtDateIn.Text = punch.Rows[0][5].ToString();
+			//	txtNotes.Text = punch.Rows[0][4].ToString();
+			//	lblCurrentPunch.Text = "--- Punched In: " + punch.Rows[0][2].ToString() + ", Date In: " 
+			//		+ punch.Rows[0][6].ToString() + ", Client: " + cmbxClientName.Text + " ---";
+			//}
 		}
 
 		private void PopulateClientProjects(int ClientID)
@@ -161,6 +170,9 @@ namespace TimeTracker
 		 * Credit: http://stackoverflow.com/questions/256832/c-sharp-fill-a-combo-box-with-a-datatable
 		 * http://stackoverflow.com/questions/17538323/how-to-display-two-different-columns-in-one-combobox
 		 * http://stackoverflow.com/questions/337797/adding-new-row-to-datatables-top
+		 * 
+		 * This function populates the Client Dropdown menu.
+		 * 
 		 */
 		private void PopulateClients()
 		{
@@ -169,7 +181,7 @@ namespace TimeTracker
 			string table = "ClientContact";
 			DataTable ClientList = DbConn.doQuery(fields, table);
 
-			//Add an empty row so that the first row will be empty and the text will show empty.
+			//Add an empty row so that the first option in the dropdown will be empty and the text will show empty.
 			DataRow EmptyRow = ClientList.NewRow();
 			EmptyRow["ID"] = 0;
 			EmptyRow["FullName"] = "";
